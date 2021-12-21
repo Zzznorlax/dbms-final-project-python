@@ -54,7 +54,7 @@ def update_order(
 
     order = service.get_order(db, order_id)
 
-    if order.owner_id != user_id:
+    if order.buyer_id != user_id:
         raise HTTPException(403, "unauthorized operation")
 
     order = service.update_order(db, order_id, req_dto)
@@ -68,15 +68,23 @@ def update_order(
 def get_order_by_id(
     *,
     db: Session = Depends(get_db),
+    config: Settings = Depends(get_settings),
+    token: str = Depends(auth_utils.oauth2_scheme),
     id: str
 ) -> Any:
     """
-    Updates order.
+    Gets order by order ID.
     """
+
+    user_id = auth_service.verify_jwt(config, token)
 
     order_id = int(id)
 
     order = service.get_order(db, order_id)
+
+    if user_id != order.buyer_id {
+        raise HTTPException(403, "unauthorized operation")
+    }
 
     return {
         'data': service.format_order(order)
@@ -87,12 +95,15 @@ def get_order_by_id(
 def get_all_orders(
     *,
     db: Session = Depends(get_db),
+    config: Settings = Depends(get_settings),
+    token: str = Depends(auth_utils.oauth2_scheme),
 ) -> Any:
     """
-    Updates order.
+    Gets all order.
     """
+    user_id = auth_service.verify_jwt(config, token)
 
-    orders = service.list_orders(db)
+    orders = service.list_orders_by_user(db, user_id)
 
     return {
         'data': [service.format_order(order) for order in orders]
@@ -108,7 +119,7 @@ def delete_by_id(
     id: str
 ) -> Any:
     """
-    Updates order.
+    Deletes order.
     """
     user_id = auth_service.verify_jwt(config, token)
 

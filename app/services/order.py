@@ -84,6 +84,15 @@ def list_orders(db: Session) -> List[Order]:
     return list(orders)
 
 
+def list_orders_by_user(db: Session, user_id: int) -> List[Order]:
+    orders = db.query(Order).filter(Order.deleted_at.is_(None)).filter(Order.buyer_id == user_id)  # type: ignore
+
+    if orders is None:
+        return []
+
+    return list(orders)
+
+
 def format_order(order: Order):
 
     buyer: User = order.buyer
