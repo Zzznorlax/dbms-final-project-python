@@ -79,7 +79,6 @@ class Product(Base):
     end_sale_time = Column(DateTime)
 
     owner_id = Column(Integer, ForeignKey('user.id'))
-
     owner = relationship("User", back_populates="products")
 
     created_at = Column(DateTime, nullable=False)
