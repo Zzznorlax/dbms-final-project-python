@@ -3,9 +3,7 @@ import requests
 from typing import Any
 from fastapi import APIRouter, Depends, status, UploadFile, File
 from fastapi.exceptions import HTTPException
-from sqlalchemy.orm import Session
 
-from app.database.session import get_db
 from app.services import auth as auth_service
 from app.utils import auth as auth_utils
 from app.utils.config import get_settings, Settings
@@ -38,6 +36,7 @@ def upload_image(
 
     resp = resp.json()
     if not resp.get('success'):
+        print(resp)
         raise HTTPException(500, "upload image failed")
 
     data = resp.get('data')

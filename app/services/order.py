@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from typing import List
-from sqlalchemy.orm import Session, joinedload, contains_eager
+from sqlalchemy.orm import Session, joinedload
 
 from app.database.models import Order, OrderItem, User, Product
 from app.schemas import order as schemas
@@ -21,7 +21,8 @@ def create_order(db: Session, user_id: int, dto: List[schemas.OrderItemDTO]) -> 
     db.commit()
     db.refresh(order)
 
-    order = db.query(Order).join(Order.items).join(OrderItem.product).filter(Order.deleted_at.is_(None)).filter(Order.id == order.id).options(contains_eager(Order.items).contains_eager(OrderItem.product)).first()  # type: ignore
+    # order = db.query(Order).join(Order.items).join(OrderItem.product).filter(Order.deleted_at.is_(None)).filter(Order.id == order.id).options(contains_eager(Order.items).contains_eager(OrderItem.product)).first()  # type: ignore
+    order = db.query(Order).join(Order.items).join(OrderItem.product).filter(Order.deleted_at.is_(None)).filter(Order.id == order.id).first()  # type: ignore
 
     return order
 

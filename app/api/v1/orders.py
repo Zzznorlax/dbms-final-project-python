@@ -82,9 +82,8 @@ def get_order_by_id(
 
     order = service.get_order(db, order_id)
 
-    if user_id != order.buyer_id {
+    if user_id != order.buyer_id:
         raise HTTPException(403, "unauthorized operation")
-    }
 
     return {
         'data': service.format_order(order)
